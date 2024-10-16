@@ -23,9 +23,15 @@
                     <td>{{ $user->email }}</td>
                     <td>{{ implode(', ', $user->roles->pluck('name')->toArray()) }}</td>
                     <td>
-                        <!-- Add action buttons like edit or delete -->
-                        <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                        <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                        <!-- Edit Button -->
+                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-warning">Edit</a>
+
+                        <!-- Delete Button -->
+                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 @endforeach

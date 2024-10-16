@@ -10,6 +10,15 @@ use App\Notifications\BidAccepted;
 
 class ProjectController extends Controller
 {
+    public function index()
+    {
+        // Retrieve all projects
+        $projects = Project::all();
+
+        // Return the view and pass the projects
+        return view('projects.index', compact('projects'));
+    }
+
     // Show the form for creating a new project
     public function create()
     {
@@ -67,4 +76,24 @@ class ProjectController extends Controller
         return redirect()->back()->with('success', 'The bid has been marked as the winner.');
     }
 
+    public function destroy(Project $project)
+    {
+        $project->delete();
+
+        return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
+    }
+
+    public function close(Project $project)
+    {
+        $project->update(['status' => 'Closed']);
+
+        return redirect()->route('projects.index')->with('success', 'Project closed successfully.');
+    }
+
+    public function open(Project $project)
+    {
+        $project->update(['status' => 'Open']);
+
+        return redirect()->route('projects.index')->with('success', 'Project opened successfully.');
+    }
 }
