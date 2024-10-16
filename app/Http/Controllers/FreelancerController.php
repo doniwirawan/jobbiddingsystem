@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
+use App\Models\Bid;
+
+
 
 class FreelancerController extends Controller
 {
@@ -33,7 +37,21 @@ class FreelancerController extends Controller
     // Method to show the details of a specific project
     public function show(Project $project)
     {
-        // Show project details for freelancers
-        return view('freelancer.projects.show', compact('project'));
+        $userBid = null;
+        $winningBid = null;
+
+        if (Auth::check() && Auth::user()->hasRole('freelancer')) {
+            // Get the authenticated user's bid for this project (if any)
+            $userBid = Bid::where('user_id', Auth::id())->where('project_id', $project->id)->first();
+
+            // Check if the user has the winning bid
+            $winningBid = Bid::where('user_id', Auth::id())
+                            ->where('project_id', $project->id)
+                            ->where('is_winner', true)
+                            ->first();
+        }
+
+        return view('freelancer.projects.show', compact('project', 'userBid', 'winningBid'));
     }
+
 }

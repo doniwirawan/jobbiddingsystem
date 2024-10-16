@@ -14,7 +14,7 @@ class BidController extends Controller
     public function index()
     {
         // Get all bids placed by the authenticated user (freelancer) along with the associated projects
-        $bids = Bid::where('user_id', Auth::id())->with('project')->get();
+        $bids = Bid::where('user_id', Auth::id())->with('project')->paginate(10);
 
         // Pass the bids to a view to display them
         return view('bids.index', compact('bids'));

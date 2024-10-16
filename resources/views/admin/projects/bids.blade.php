@@ -33,11 +33,13 @@
                         @endif
                     </td>
                     <td>
-                        <!-- Mark as Winner Button -->
-                        <form action="{{ route('admin.projects.markWinner', ['project' => $project->id, 'bid' => $bid->id]) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-success" {{ $bid->is_winner ? 'disabled' : '' }}>Mark as Winner</button>
-                        </form>
+                         <!-- Mark as Winner Button -->
+                        @if(!$bid->is_winner)
+                            <form action="{{ route('admin.projects.markWinner', [$project->id, $bid->id]) }}" method="POST" style="display:inline-block;">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Are you sure you want to mark this bid as the winner?')">Mark as Winner</button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
                 @endforeach

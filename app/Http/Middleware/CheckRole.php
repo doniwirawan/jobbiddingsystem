@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CheckRole
@@ -16,12 +15,23 @@ class CheckRole
      * @param  string  $role
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, $role)
+    public function handle($request, Closure $next, $role)
     {
-        if (Auth::check() && Auth::user()->role === $role) {
-            return $next($request);
+        // Check if the user is authenticated
+        if (!Auth::check()) {
+            return redirect('/login'); // Redirect to login if not authenticated
         }
 
-        return redirect('/'); // Redirect to home or error page if unauthorized
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Check if the user has the required role
+        if (!$user->hasRole($role)) {
+            // If the user does not have the required role, return a 403 response or redirect
+            abort(403, 'Unauthorized action.');
+        }
+
+        // If the user has the role, allow the request to proceed
+        return $next($request);
     }
 }

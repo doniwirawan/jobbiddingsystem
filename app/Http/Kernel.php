@@ -6,8 +6,7 @@ use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Spatie\Permission\Middlewares\RoleMiddleware;
 use Spatie\Permission\Middlewares\PermissionMiddleware;
 use Spatie\Permission\Middlewares\RoleOrPermissionMiddleware;
-use Spatie\Permission\Traits\HasRoles;
-
+use App\Http\Middleware\CheckRole; // Corrected namespace for CheckRole
 
 class Kernel extends HttpKernel
 {
@@ -66,11 +65,10 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-
+        'checkrole' => \App\Http\Middleware\CheckRole::class, // Corrected CheckRole middleware registration
         // Spatie Permission Middleware
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,  // Register the role middleware
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
     ];
-
 }

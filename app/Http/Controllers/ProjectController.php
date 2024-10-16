@@ -7,13 +7,15 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\Bid;
 use App\Notifications\BidAccepted;
+use App\Notifications\BidWonNotification;
+
 
 class ProjectController extends Controller
 {
     public function index()
     {
         // Retrieve all projects
-        $projects = Project::all();
+        $projects = Project::all()->paginate(10);
 
         // Return the view and pass the projects
         return view('projects.index', compact('projects'));
@@ -67,13 +69,17 @@ class ProjectController extends Controller
 
     public function markWinner(Project $project, Bid $bid)
     {
-        // Reset other bids for this project
+        // Reset all other bids for this project to is_winner = false
         Bid::where('project_id', $project->id)->update(['is_winner' => false]);
 
         // Mark the selected bid as the winner
-        $bid->update(['is_winner' => true]);
+        $bid->is_winner = true;
+        $bid->save();
 
-        return redirect()->back()->with('success', 'The bid has been marked as the winner.');
+        // Optionally, notify the freelancer about the winning bid
+        $bid->user->notify(new BidWonNotification($bid));
+
+        return redirect()->route('admin.projects.bids', $project->id)->with('success', 'The winner has been set.');
     }
 
     public function destroy(Project $project)
@@ -96,4 +102,23 @@ class ProjectController extends Controller
 
         return redirect()->route('projects.index')->with('success', 'Project opened successfully.');
     }
+    public function show(Project $project)
+    {
+        $userBid = null;
+        $winningBid = null;
+
+        if (Auth::check() && Auth::user()->hasRole('freelancer')) {
+            // Get the authenticated user's bid for this project (if any)
+            $userBid = Bid::where('user_id', Auth::id())->where('project_id', $project->id)->first();
+
+            // Check if the user has the winning bid
+            $winningBid = Bid::where('user_id', Auth::id())
+                            ->where('project_id', $project->id)
+                            ->where('is_winner', true)
+                            ->first();
+        }
+
+        return view('projects.show', compact('project', 'userBid', 'winningBid'));
+    }
+
 }
