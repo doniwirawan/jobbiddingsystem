@@ -27,12 +27,18 @@
 
             <!-- Conditional buttons for freelancers and project management -->
             <div class="mt-4 d-flex justify-content-between">
-                @role('freelancer')
-                    <!-- Freelancer's "Place Bid" Button -->
-                    <a href="{{ route('bids.create', $project->id) }}" class="btn btn-success">
-                        <i class="bi bi-hand-thumbs-up"></i> Place Bid
-                    </a>
-                @endrole
+<!-- Show bidding option for freelancers -->
+                            @if(Auth::check())
+                                @role('freelancer')
+                                    <a href="{{ route('bids.create', $project->id) }}" class="btn btn-success btn-sm">
+                                        <i class="bi bi-hand-thumbs-up"></i> Place Bid
+                                    </a>
+                                @endrole
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-box-arrow-in-right"></i> Login to Bid
+                                </a>
+                            @endif
 
                 <!-- For producers or admins: Edit/Delete buttons -->
                 @hasanyrole('producer|admin')

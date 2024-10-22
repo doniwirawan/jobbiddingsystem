@@ -11,24 +11,13 @@
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav me-auto">
                 @auth
-                 
-                    @hasanyrole('freelancer')
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                            <i class="bi bi-speedometer2"></i> Dashboard
-                        </a>
-                    </li>
-                    @endhasanyrole
-                    @hasanyrole('producer')
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
-                                <i class="bi bi-speedometer"></i> Admin Dashboard
-                            </a>
-                        </li>
-                    @endhasanyrole
-
                     <!-- Freelancer-specific links -->
                     @role('freelancer')
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('bids.index') ? 'active' : '' }}" href="{{ route('bids.index') }}">
                                 <i class="bi bi-list-check"></i> My Bids
@@ -43,6 +32,11 @@
 
                     <!-- Producer-specific links -->
                     @role('producer')
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+                                <i class="bi bi-speedometer"></i> Admin Dashboard
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('projects.create') ? 'active' : '' }}" href="{{ route('projects.create') }}">
                                 <i class="bi bi-plus-circle"></i> Create Project
@@ -102,7 +96,7 @@
                             <!-- Display User Roles -->
                             <div class="dropdown-item-text">
                                 <strong>Roles:</strong>
-                                <ul class="list-unstyled">
+                                <ul class="list-unstyled mb-2">
                                     @foreach(Auth::user()->roles as $role)
                                         <li>{{ ucfirst($role->name) }}</li>
                                     @endforeach
@@ -116,16 +110,13 @@
                                 </a>
                             @endrole
 
+                            <!-- Profile & Logout -->
                             <a class="dropdown-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
                                 <i class="bi bi-person"></i> {{ __('Profile') }}
                             </a>
-
-                            <a class="dropdown-item" href="{{ route('logout') }}"
-                               onclick="event.preventDefault();
-                                        document.getElementById('logout-form').submit();">
+                            <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 <i class="bi bi-box-arrow-right"></i> {{ __('Logout') }}
                             </a>
-
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                 @csrf
                             </form>
