@@ -13,6 +13,23 @@ use Spatie\Permission\Traits\HasRoles;  // Import the HasRoles trait
 use Laravel\Sanctum\HasApiTokens; 
 use App\Http\Controllers\DashboardController;
 
+
+// Admin Bid Routes
+Route::middleware(['auth'])->group(function () {
+    // Route to set a winning bid
+    Route::post('/admin/projects/{project}/bids/{bid}/winner', [ProjectController::class, 'markWinner'])->name('admin.projects.markWinner');
+    
+    // Route to close a bid
+    Route::patch('/admin/bids/{bid}/close', [BidController::class, 'close'])->name('admin.bids.close');
+    
+    // Route to delete a bid
+    Route::delete('/admin/bids/{bid}', [BidController::class, 'destroy'])->name('admin.bids.destroy');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+});
+
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
 
 Route::middleware('role:admin')->group(function () {
@@ -33,14 +50,15 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin project and bid management
     Route::get('/admin/projects', [AdminController::class, 'projects'])->name('admin.projects.index');
-    Route::get('/admin/bids', [BidController::class, 'index'])->name('admin.bids.index');
+   
+    // Admin bid management route
+    Route::get('/admin/bids', [BidController::class, 'allBids'])->name('admin.bids.index');
+    
     Route::get('/admin/projects/{project}/bids', [ProjectController::class, 'showBids'])->name('admin.projects.bids');
     Route::post('/admin/projects/{project}/bids/{bid}/winner', [ProjectController::class, 'markWinner'])->name('admin.projects.markWinner');
 
-    // Admin dashboard
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+   
+    
 });
 
 // Producer routes (only for producers)
@@ -67,11 +85,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    
-    // Dashboard route (accessible to all authenticated users)
-    // Route::get('/dashboard', function () {
-    //     return view('dashboard');
-    // })->middleware('verified')->name('dashboard');
 });
 
 // Public routes (accessible to everyone, including unauthenticated users)

@@ -24,12 +24,19 @@ class ProjectController extends Controller
     // Show the form for creating a new project
     public function create()
     {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'producer') {
+            abort(403);  // Unauthorized access, redirect to custom 403 page
+        }
+
         return view('projects.create');
     }
 
     // Store the newly created project in the database
     public function store(Request $request)
     {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'producer') {
+            abort(403);  // Unauthorized access, redirect to custom 403 page
+        }
         $request->validate([
             'name' => 'required|string|max:255',
             'date' => 'required|date',
@@ -50,6 +57,8 @@ class ProjectController extends Controller
             'role' => $request->role,
             'remarks' => $request->remarks,
             'status' => $request->status,
+            'created_by' => auth()->user()->id,  // Store the creator's ID
+
         ]);
 
         return redirect()->route('projects.create')->with('success', 'Project created successfully.');
@@ -58,6 +67,9 @@ class ProjectController extends Controller
     // Display bids for a specific project, showing the lowest bid
     public function showBids(Project $project)
     {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'producer') {
+            abort(403);  // Unauthorized access, redirect to custom 403 page
+        }
         // Retrieve all bids for this project, ordered by amount (lowest first)
         $bids = Bid::where('project_id', $project->id)->orderBy('amount', 'asc')->get();
 
@@ -69,6 +81,9 @@ class ProjectController extends Controller
 
     public function markWinner(Project $project, Bid $bid)
     {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'producer') {
+            abort(403);  // Unauthorized access, redirect to custom 403 page
+        }
         // Reset all other bids for this project to is_winner = false
         Bid::where('project_id', $project->id)->update(['is_winner' => false]);
 
@@ -84,6 +99,9 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'producer') {
+            abort(403);  // Unauthorized access, redirect to custom 403 page
+        }
         $project->delete();
 
         return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
@@ -91,6 +109,9 @@ class ProjectController extends Controller
 
     public function close(Project $project)
     {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'producer') {
+            abort(403);  // Unauthorized access, redirect to custom 403 page
+        }
         $project->update(['status' => 'Closed']);
 
         return redirect()->route('projects.index')->with('success', 'Project closed successfully.');
@@ -98,6 +119,9 @@ class ProjectController extends Controller
 
     public function open(Project $project)
     {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'producer') {
+            abort(403);  // Unauthorized access, redirect to custom 403 page
+        }
         $project->update(['status' => 'Open']);
 
         return redirect()->route('projects.index')->with('success', 'Project opened successfully.');

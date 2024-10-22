@@ -2,7 +2,16 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2 class="fw-bold mb-4"><i class="bi bi-briefcase-fill"></i> Manage Projects</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="bi bi-briefcase-fill"></i> Manage Projects</h2>
+
+        <!-- Button to create a new project (only for producers and admins) -->
+        @hasanyrole('producer|admin')
+        <a href="{{ route('projects.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle-fill"></i> Add New Project
+        </a>
+        @endhasanyrole
+    </div>
 
     @if($projects->isEmpty())
         <div class="alert alert-info text-center">

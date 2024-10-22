@@ -18,15 +18,26 @@ class DashboardController extends Controller
             $projectCount = Project::count();
             $bidCount = Bid::count();
 
-            return view('dashboard', compact('userCount', 'projectCount', 'bidCount'));
+            return view('dashboard', [
+                'userCount' => $userCount,
+                'projectCount' => $projectCount,
+                'bidCount' => $bidCount,
+                'role' => 'admin',
+            ]);
         }
 
         // Producer-specific data
         if (Auth::user()->hasRole('producer')) {
-            $projectCount = Project::where('created_by', Auth::id())->count();
-            $totalBidsReceived = Bid::whereIn('project_id', Project::where('created_by', Auth::id())->pluck('id'))->count();
+             $userCount = User::count();
+            $projectCount = Project::count();
+            $bidCount = Bid::count();
 
-            return view('dashboard', compact('projectCount', 'totalBidsReceived'));
+            return view('dashboard', [
+                'userCount' => $userCount,
+                'projectCount' => $projectCount,
+                'bidCount' => $bidCount,
+                'role' => 'admin',
+            ]);
         }
 
         // Freelancer-specific data
@@ -34,10 +45,14 @@ class DashboardController extends Controller
             $bidCount = Bid::where('user_id', Auth::id())->count();
             $projectsWon = Bid::where('user_id', Auth::id())->where('is_winner', true)->count();
 
-            return view('dashboard', compact('bidCount', 'projectsWon'));
+            return view('dashboard', [
+                'bidCount' => $bidCount,
+                'projectsWon' => $projectsWon,
+                'role' => 'freelancer',
+            ]);
         }
 
-        // Default return (for other roles or guests, if applicable)
+        // Default return (for other roles or guests)
         return view('dashboard');
     }
 }

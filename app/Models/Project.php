@@ -21,7 +21,8 @@ class Project extends Model
         'rate',
         'role',
         'remarks',
-        'status'
+        'status',
+        'created_by',
     ];
 }
 

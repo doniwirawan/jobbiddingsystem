@@ -13,6 +13,42 @@
         @endhasanyrole
     </div>
 
+    <!-- Search Form -->
+    <form method="GET" action="{{ url('/projects') }}" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <select name="entity" class="form-select">
+                    <option value="">All Entities</option>
+                    <option value="Corp" {{ request('entity') == 'Corp' ? 'selected' : '' }}>Corp</option>
+                    <option value="Weddings" {{ request('entity') == 'Weddings' ? 'selected' : '' }}>Weddings</option>
+                    <option value="Studio" {{ request('entity') == 'Studio' ? 'selected' : '' }}>Studio</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="type" class="form-select">
+                    <option value="">Photography/Videography</option>
+                    <option value="Photography" {{ request('type') == 'Photography' ? 'selected' : '' }}>Photography</option>
+                    <option value="Videography" {{ request('type') == 'Videography' ? 'selected' : '' }}>Videography</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="role" class="form-select">
+                    <option value="">All Roles</option>
+                    <option value="Primary" {{ request('role') == 'Primary' ? 'selected' : '' }}>Primary</option>
+                    <option value="Secondary" {{ request('role') == 'Secondary' ? 'selected' : '' }}>Secondary</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex">
+                <button type="submit" class="btn btn-primary w-100 me-2">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                <a href="{{ url('/projects') }}" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle"></i> Reset
+                </a>
+            </div>
+        </div>
+    </form>
+
     <!-- Check if there are any projects -->
     @if($projects->isEmpty())
         <div class="alert alert-info text-center">

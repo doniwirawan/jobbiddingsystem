@@ -2,8 +2,16 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2 class="fw-bold"><i class="bi bi-speedometer2"></i> Dashboard</h2>
-    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="bi bi-speedometer2"></i> Dashboard</h2>
+
+        <!-- Button to create a new project (only for producers and admins) -->
+        @hasanyrole('producer|admin')
+        <a href="{{ route('projects.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle-fill"></i> Add New Project
+        </a>
+        @endhasanyrole
+    </div>
     @role('admin')
     <div class="row">
         <div class="col-md-4">
@@ -39,36 +47,48 @@
         <h4>Admin Quick Actions</h4>
         <a href="{{ route('admin.users.index') }}" class="btn btn-primary"><i class="bi bi-people"></i> Manage Users</a>
         <a href="{{ route('admin.projects.index') }}" class="btn btn-success"><i class="bi bi-briefcase"></i> Manage Projects</a>
+      
         <a href="{{ route('admin.bids.index') }}" class="btn btn-warning"><i class="bi bi-file-earmark-text"></i> View Bids</a>
     </div>
     @endrole
 
     @role('producer')
-    <div class="row">
-        <div class="col-md-6">
+     <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm text-center">
+                <div class="card-body">
+                    <i class="bi bi-people-fill fs-1 text-primary"></i>
+                    <h3>{{ $userCount }}</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
             <div class="card shadow-sm text-center">
                 <div class="card-body">
                     <i class="bi bi-briefcase-fill fs-1 text-success"></i>
                     <h3>{{ $projectCount }}</h3>
-                    <p>Projects Created</p>
+                    <p>Total Projects</p>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card shadow-sm text-center">
                 <div class="card-body">
                     <i class="bi bi-file-earmark-text-fill fs-1 text-warning"></i>
-                    <h3>{{ $totalBidsReceived }}</h3>
-                    <p>Total Bids Received</p>
+                    <h3>{{ $bidCount }}</h3>
+                    <p>Total Bids</p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="mt-4">
-        <h4>Producer Quick Actions</h4>
-        <a href="{{ route('projects.create') }}" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create New Project</a>
-        <a href="{{ route('projects.index') }}" class="btn btn-success"><i class="bi bi-briefcase"></i> Manage Projects</a>
+        <h4>Admin Quick Actions</h4>
+        <a href="{{ route('admin.users.index') }}" class="btn btn-primary"><i class="bi bi-people"></i> Manage Users</a>
+        <a href="{{ route('admin.projects.index') }}" class="btn btn-success"><i class="bi bi-briefcase"></i> Manage Projects</a>
+      
+        <a href="{{ route('admin.bids.index') }}" class="btn btn-warning"><i class="bi bi-file-earmark-text"></i> View Bids</a>
     </div>
     @endrole
 

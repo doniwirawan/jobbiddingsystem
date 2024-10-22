@@ -11,6 +11,21 @@ use Spatie\Permission\Models\Role;
 
 class BidController extends Controller
 {
+    public function allBids()
+    {
+        /// Retrieve all bids except those placed by the current admin
+        $bids = Bid::where('user_id', '!=', Auth::id())
+                    ->with('project', 'user')
+                    ->get();
+
+        // Find the lowest bid for each project
+        $lowestBids = Bid::select('project_id')
+                         ->selectRaw('MIN(amount) as lowest_amount')
+                         ->groupBy('project_id')
+                         ->pluck('lowest_amount', 'project_id');
+
+        return view('admin.bids.index', compact('bids', 'lowestBids'));
+    }
     public function index()
     {
         // Get all bids placed by the authenticated user (freelancer) along with the associated projects
