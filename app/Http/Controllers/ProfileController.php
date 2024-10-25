@@ -53,4 +53,17 @@ class ProfileController extends Controller
 
         return redirect('/')->with('success', 'Account deleted successfully.');
     }
+    public function sendEmailToWinner(Project $project, Bid $bid)
+    {
+        // Ensure the bid is marked as the winner
+        if (!$bid->is_winner) {
+            return back()->with('error', 'This bid is not marked as the winner.');
+        }
+
+        // Send email to the winner (you can customize this)
+        $bid->user->notify(new BidWonNotification($bid));
+
+        return back()->with('success', 'Email sent to the winner successfully.');
+    }
+
 }

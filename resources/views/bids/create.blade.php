@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold"><i class="bi bi-hand-thumbs-up-fill"></i> Place Your Bid</h2>
-        <a href="{{ route('projects.show', $project->id) }}" class="btn btn-secondary">
+        <a href="{{ route('projects.show', $project->slug) }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i> Back to Project
         </a>
     </div>
@@ -18,7 +18,7 @@
                 <strong><i class="bi bi-currency-dollar"></i> Rate:</strong> ${{ number_format($project->rate, 2) }}
             </p>
 
-            <form action="{{ route('bids.store', $project->id) }}" method="POST">
+            <form action="{{ route('bids.store', $project->slug) }}" method="POST">
                 @csrf
 
                 <!-- Bid Amount Input -->

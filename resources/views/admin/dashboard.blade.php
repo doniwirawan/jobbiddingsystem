@@ -78,7 +78,7 @@
                             <div>
                                 <strong>{{ $project->name }}</strong> - {{ $project->date }} ({{ $project->entity }})
                             </div>
-                            <a href="{{ route('projects.show', $project->id) }}" class="btn btn-sm btn-info">View</a>
+                            <a href="{{ route('projects.show', $project->slug) }}" class="btn btn-sm btn-info">View</a>
                         </li>
                     @endforeach
                 </ul>

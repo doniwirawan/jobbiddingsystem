@@ -22,7 +22,7 @@
             <tbody>
                 @foreach ($projects as $project)
                 <tr>
-                    <td><a href="{{ route('projects.show', $project->id) }}">{{ $project->name }}</a></td>
+                    <td><a href="{{ route('projects.show', $project->slug) }}">{{ $project->name }}</a></td>
                     <td>{{ $project->date }}</td>
                     <td>{{ $project->entity }}</td>
                     <td>{{ $project->type }}</td>
@@ -30,20 +30,20 @@
                     <td>{{ $project->status }}</td>
                     <td>
                         <!-- Action Buttons -->
-                        <form action="{{ route('projects.delete', $project->id) }}" method="POST" style="display:inline;">
+                        <form action="{{ route('projects.delete', $project->slug) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                         </form>
 
                         @if($project->status === 'Open')
-                            <form action="{{ route('projects.close', $project->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('projects.close', $project->slug) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit" class="btn btn-warning btn-sm">Close</button>
                             </form>
                         @else
-                            <form action="{{ route('projects.open', $project->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('projects.open', $project->slug) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit" class="btn btn-success btn-sm">Open</button>

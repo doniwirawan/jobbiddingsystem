@@ -6,7 +6,7 @@
         <div class="col-md-6">
             <!-- Logo or Branding -->
             <div class="text-center mb-4">
-                <h1 class="display-5 fw-bold">{{ config('app.name', 'Studio Five Jobs') }}</h1>
+                <h1 class="display-5 fw-bold">{{ config('app.name', 'Jobs at Studio Five') }}</h1>
                 <p class="text-muted">Create a new account to start bidding on projects.</p>
             </div>
 

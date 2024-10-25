@@ -27,32 +27,66 @@
 
             <!-- Conditional buttons for freelancers and project management -->
             <div class="mt-4 d-flex justify-content-between">
-<!-- Show bidding option for freelancers -->
-                            @if(Auth::check())
-                                @role('freelancer')
-                                    <a href="{{ route('bids.create', $project->id) }}" class="btn btn-success btn-sm">
-                                        <i class="bi bi-hand-thumbs-up"></i> Place Bid
-                                    </a>
-                                @endrole
-                            @else
-                                <a href="{{ route('login') }}" class="btn btn-warning btn-sm">
-                                    <i class="bi bi-box-arrow-in-right"></i> Login to Bid
-                                </a>
-                            @endif
+                <!-- Show bidding option for freelancers -->
+                @if(Auth::check())
+                    @role('freelancer')
+                        <a href="{{ route('bids.create', $project->slug) }}" class="btn btn-success btn-sm">
+                            <i class="bi bi-hand-thumbs-up"></i> Place Bid
+                        </a>
 
-                <!-- For producers or admins: Edit/Delete buttons -->
+                        <!-- View My Bids for this project (Freelancer) -->
+                        @if($userBid)
+                            <a href="{{ route('bids.history', ['project' => $project->slug, 'user' => auth()->id()]) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-list-check"></i> View My Bids
+                            </a>
+                        @endif
+                    @endrole
+                @else
+                    <a href="{{ route('login') }}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-box-arrow-in-right"></i> Login to Bid
+                    </a>
+                @endif
+
+                <!-- Admin/Producer: Project Management Buttons -->
                 @hasanyrole('producer|admin')
                     <div>
-                        {{-- <a href="{{ route('projects.edit', $project->id) }}" class="btn btn-warning">
+                        <!-- Edit Project Button -->
+                        <a href="{{ route('projects.edit', $project->slug) }}" class="btn btn-warning me-2">
                             <i class="bi bi-pencil-fill"></i> Edit Project
-                        </a> --}}
-                        <form action="{{ route('projects.delete', $project->id) }}" method="POST" style="display: inline-block;">
+                        </a>
+
+                        <!-- Delete Project Button -->
+                        <form action="{{ route('projects.delete', $project->slug) }}" method="POST" style="display: inline-block;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this project?');">
+                            <button type="submit" class="btn btn-danger me-2" onclick="return confirm('Are you sure you want to delete this project?');">
                                 <i class="bi bi-trash-fill"></i> Delete Project
                             </button>
                         </form>
+
+                        <!-- Open/Close Project Button -->
+                        @if($project->status === 'Open')
+                            <form action="{{ route('projects.close', $project->slug) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-warning me-2">
+                                    <i class="bi bi-x-circle"></i> Close Project
+                                </button>
+                            </form>
+                        @else
+                            <form action="{{ route('projects.open', $project->slug) }}" method="POST" style="display:inline;">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="btn btn-success me-2">
+                                    <i class="bi bi-check-circle"></i> Open Project
+                                </button>
+                            </form>
+                        @endif
+
+                        <!-- View Bidders Button (Admin and Producer) -->
+                        <a href="{{ route('admin.projects.bids', $project->slug) }}" class="btn btn-info">
+                            <i class="bi bi-person-lines-fill"></i> View Bidders
+                        </a>
                     </div>
                 @endhasanyrole
             </div>
