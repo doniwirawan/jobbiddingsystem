@@ -34,40 +34,107 @@
                 @foreach ($projects as $project)
                 <tr>
                     <td>{{ $project->name }}</td>
-                    <td>{{ $project->date }}</td>
+                    <td>{{ $project->start_date ?? 'N/A' }} - {{ $project->end_date ?? 'N/A' }}</td>
                     <td>{{ $project->entity }}</td>
                     <td>{{ $project->type }}</td>
                     <td>${{ number_format($project->rate, 2) }}</td>
                     <td>
-                        @if($project->status === 'Open')
-                            <span class="badge bg-success">Open</span>
-                        @else
-                            <span class="badge bg-danger">Closed</span>
-                        @endif
+                        <span class="badge {{ $project->status === 'Open' ? 'bg-success' : 'bg-danger' }}">
+                            {{ $project->status }}
+                        </span>
                     </td>
-                    <td class="d-flex">
+                    <td>
                         <!-- View Button -->
                         <a href="{{ route('projects.show', $project->slug) }}" class="btn btn-sm btn-info me-2">
                             <i class="bi bi-eye-fill"></i> View
                         </a>
 
                         <!-- Delete Button (opens modal) -->
-                        <button type="button" class="btn btn-sm btn-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteModal" data-project-slug="{{ $project->slug }}" data-project-name="{{ $project->name }}">
+                        <button class="btn btn-sm btn-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $project->slug }}">
                             <i class="bi bi-trash-fill"></i> Delete
                         </button>
 
                         <!-- Status Toggle Buttons (Open/Close) -->
                         @if($project->status === 'Open')
-                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#closeModal" data-project-slug="{{ $project->slug }}" data-project-name="{{ $project->name }}">
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#closeModal-{{ $project->slug }}">
                                 <i class="bi bi-x-circle-fill"></i> Close
                             </button>
                         @else
-                            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#openModal" data-project-slug="{{ $project->slug }}" data-project-name="{{ $project->name }}">
+                            <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#openModal-{{ $project->slug }}">
                                 <i class="bi bi-check-circle-fill"></i> Open
                             </button>
                         @endif
                     </td>
                 </tr>
+
+                <!-- Delete Confirmation Modal -->
+                <div class="modal fade" id="deleteModal-{{ $project->slug }}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete the project <strong>{{ $project->name }}</strong>?
+                            </div>
+                            <div class="modal-footer">
+                                <form method="POST" action="{{ route('admin.projects.destroy', $project->slug) }}">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Close Confirmation Modal -->
+                <div class="modal fade" id="closeModal-{{ $project->slug }}" tabindex="-1" aria-labelledby="closeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Close Project</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to close the project <strong>{{ $project->name }}</strong>?
+                            </div>
+                            <div class="modal-footer">
+                                <form method="POST" action="{{ route('admin.projects.close', $project->slug) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn btn-warning">Yes, Close</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Open Confirmation Modal -->
+                <div class="modal fade" id="openModal-{{ $project->slug }}" tabindex="-1" aria-labelledby="openModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Confirm Open Project</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to open the project <strong>{{ $project->name }}</strong>?
+                            </div>
+                            <div class="modal-footer">
+                                <form method="POST" action="{{ route('admin.projects.open', $project->slug) }}">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn btn-success">Yes, Open</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 @endforeach
             </tbody>
         </table>
@@ -78,115 +145,4 @@
         </div> --}}
     @endif
 </div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete the project <strong><span id="modalProjectName"></span></strong>?
-            </div>
-            <div class="modal-footer">
-                <form id="deleteProjectForm" method="POST" action="">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Close Confirmation Modal -->
-<div class="modal fade" id="closeModal" tabindex="-1" aria-labelledby="closeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="closeModalLabel">Confirm Close Project</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to close the project <strong><span id="modalCloseProjectName"></span></strong>?
-            </div>
-            <div class="modal-footer">
-                <form id="closeProjectForm" method="POST" action="">
-                    @csrf
-                    @method('PATCH')
-                    <button type="submit" class="btn btn-warning">Yes, Close</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Open Confirmation Modal -->
-<div class="modal fade" id="openModal" tabindex="-1" aria-labelledby="openModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="openModalLabel">Confirm Open Project</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to open the project <strong><span id="modalOpenProjectName"></span></strong>?
-            </div>
-            <div class="modal-footer">
-                <form id="openProjectForm" method="POST" action="">
-                    @csrf
-                    @method('PATCH')
-                    <button type="submit" class="btn btn-success">Yes, Open</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
 @endsection
-
-@section('scripts')
-<script>
-    // Handle delete project modal
-    var deleteModal = document.getElementById('deleteModal');
-    deleteModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        var projectSlug = button.getAttribute('data-project-slug');
-        var projectName = button.getAttribute('data-project-name');
-        var modalProjectName = deleteModal.querySelector('#modalProjectName');
-        modalProjectName.textContent = projectName;
-        var form = deleteModal.querySelector('#deleteProjectForm');
-        form.action = '/projects/' + projectSlug;
-    });
-
-    // Handle close project modal
-    var closeModal = document.getElementById('closeModal');
-    closeModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        var projectSlug = button.getAttribute('data-project-slug');
-        var projectName = button.getAttribute('data-project-name');
-        var modalCloseProjectName = closeModal.querySelector('#modalCloseProjectName');
-        modalCloseProjectName.textContent = projectName;
-        var form = closeModal.querySelector('#closeProjectForm');
-        form.action = '/projects/' + projectSlug + '/close';
-    });
-
-    // Handle open project modal
-    var openModal = document.getElementById('openModal');
-    openModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        var projectSlug = button.getAttribute('data-project-slug');
-        var projectName = button.getAttribute('data-project-name');
-        var modalOpenProjectName = openModal.querySelector('#modalOpenProjectName');
-        modalOpenProjectName.textContent = projectName;
-        var form = openModal.querySelector('#openProjectForm');
-        form.action = '/projects/' + projectSlug + '/open';
-    });
-</script>
-@endsection
-

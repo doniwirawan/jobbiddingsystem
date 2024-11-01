@@ -97,7 +97,7 @@
                             <div>
                                 Bid by <strong>{{ $bid->user->name }}</strong> on <strong>{{ $bid->project->name }}</strong> - ${{ number_format($bid->amount, 2) }}
                             </div>
-                            <a href="{{ route('admin.projects.bids', $bid->project->id) }}" class="btn btn-sm btn-info">View Bids</a>
+                            <a href="{{ route('admin.projects.bids', $bid->project->slug) }}" class="btn btn-sm btn-info">View Bids</a>
                         </li>
                     @endforeach
                 </ul>

@@ -39,20 +39,18 @@
                         @endif
                     </td>
                     <td>
-                        <!-- Trigger the Mark as Winner Modal -->
+                        <!-- Mark as Winner Button -->
                         @if($bid->status !== 'Won')
-                            {{-- <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#markWinnerModal" data-bid-id="{{ $bid->id }}" data-bid-project="{{ $bid->project->name }}">
-                                <i class="bi bi-trophy"></i> Set as Winner
-                            </button> --}}
                             <form action="/admin/projects/{{ $bid->project->slug }}/bids/{{ $bid->id }}/winner" method="POST" onsubmit="logFormData('{{ $bid->project->slug }}', '{{ $bid->id }}')">
-    @csrf
-    <button type="submit" class="btn btn-primary">Mark as Winner</button>
-</form>
+                                @csrf
+                                <button type="submit" class="btn btn-primary">Mark as Winner</button>
+                            </form>
                         @else
                             <span class="badge bg-success">Winner</span>
                         @endif
 
-                        {{-- @if($bid->status !== 'Closed')
+                        <!-- Optional Close Bid and Delete Buttons -->
+                        @if($bid->status !== 'Closed')
                             <form action="{{ route('admin.bids.close', $bid->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('PATCH')
@@ -64,10 +62,10 @@
                             <span class="badge bg-danger">Closed</span>
                         @endif
 
-                        <!-- Trigger the Delete Modal -->
+                        <!-- Trigger Delete Modal -->
                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bid-id="{{ $bid->id }}" data-bid-project="{{ $bid->project->name }}">
                             <i class="bi bi-trash"></i> Delete
-                        </button> --}}
+                        </button>
                     </td>
                 </tr>
                 @endforeach
@@ -77,7 +75,7 @@
 </div>
 
 <!-- Delete Confirmation Modal -->
-{{-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -97,9 +95,9 @@
             </div>
         </div>
     </div>
-</div> --}}
+</div>
 
-<!-- Mark as Winner Modal -->
+<!-- Mark as Winner Confirmation Modal -->
 <div class="modal fade" id="markWinnerModal" tabindex="-1" aria-labelledby="markWinnerModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -126,36 +124,42 @@
 
 @section('scripts')
 <script>
-    // Attach event listener to trigger delete modal and set values
-    // var deleteModal = document.getElementById('deleteModal');
-    // deleteModal.addEventListener('show.bs.modal', function (event) {
-    //     var button = event.relatedTarget; // Button that triggered the modal
-    //     var bidId = button.getAttribute('data-bid-id'); // Extract bid ID from data-* attributes
-    //     var projectName = button.getAttribute('data-bid-project'); // Extract project name
+    // Show modal and update content dynamically
+    var deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var bidId = button.getAttribute('data-bid-id');
+        var projectName = button.getAttribute('data-bid-project');
 
-    //     // Update modal content
-    //     var modalProjectName = deleteModal.querySelector('#modalProjectName');
-    //     modalProjectName.textContent = projectName;
+        // Update modal content
+        var modalProjectName = deleteModal.querySelector('#modalProjectName');
+        modalProjectName.textContent = projectName;
 
-    //     // Update form action URL
-    //     var form = deleteModal.querySelector('#deleteBidForm');
-    //     form.action = '/admin/bids/' + bidId; // Set the delete route with the bid ID
-    // });
+        // Update form action URL
+        var form = deleteModal.querySelector('#deleteBidForm');
+        form.action = '/admin/bids/' + bidId;
+    });
 
-    // Attach event listener to trigger mark as winner modal and set values
-    // var markWinnerModal = document.getElementById('markWinnerModal');
-    // markWinnerModal.addEventListener('show.bs.modal', function (event) {
-    //     var button = event.relatedTarget; // Button that triggered the modal
-    //     var bidId = button.getAttribute('data-bid-id'); // Extract bid ID from data-* attributes
-    //     var projectName = button.getAttribute('data-bid-project'); // Extract project name
+    // Show Mark as Winner Modal and set dynamic form action
+    var markWinnerModal = document.getElementById('markWinnerModal');
+    markWinnerModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var bidId = button.getAttribute('data-bid-id');
+        var projectName = button.getAttribute('data-bid-project');
 
-    //     // Update modal content
-    //     var modalProjectName = markWinnerModal.querySelector('#modalMarkWinnerProjectName');
-    //     modalProjectName.textContent = projectName;
+        // Update modal content
+        var modalProjectName = markWinnerModal.querySelector('#modalMarkWinnerProjectName');
+        modalProjectName.textContent = projectName;
 
-    //     // Update form action URL
-    //     var form = markWinnerModal.querySelector('#markWinnerForm');
-    //     form.action = '/admin/projects/' + bidId + '/bids/' + bidId + '/winner'; // Set the mark winner route with the project and bid ID
-    // });
+        // Update form action URL
+        var form = markWinnerModal.querySelector('#markWinnerForm');
+        form.action = '/admin/projects/' + projectName + '/bids/' + bidId + '/winner';
+    });
+
+    // Optional: Debug logging function
+    function logFormData(projectSlug, bidId) {
+        console.log('Project Slug:', projectSlug);
+        console.log('Bid ID:', bidId);
+    }
 </script>
 @endsection
