@@ -65,9 +65,9 @@
 
                             <!-- Cancel Bid Option Available for Pending Bids -->
                             @if (!$bid->is_winner || ($bid->is_winner && $bid->is_accepted === null))
-                                <form action="{{ route('bids.reject', $bid->id) }}" method="POST" class="d-inline">
+                                <form action="{{ route('bids.destroy', ['project' => $bid->project->slug, 'bid' => $bid->id]) }}" method="POST" class="d-inline">
                                     @csrf
-                                    @method('PATCH')
+                                    @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger">
                                         <i class="bi bi-x-circle"></i> Cancel Bid
                                     </button>
@@ -89,7 +89,6 @@
                 @endforeach
             </tbody>
         </table>
-
         <!-- Pagination Links -->
         <div class="d-flex justify-content-center">
             {{ $bids->links() }}
@@ -97,3 +96,5 @@
     @endif
 </div>
 @endsection
+
+

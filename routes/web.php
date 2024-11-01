@@ -77,6 +77,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects/{project:slug}/bids/history', [BidController::class, 'history'])->name('bids.history');
     Route::patch('/bids/{bid}/accept', [BidController::class, 'accept'])->name('bids.accept');
     Route::patch('/bids/{bid}/reject', [BidController::class, 'reject'])->name('bids.reject');
+    Route::delete('/projects/{project:slug}/bids/{bid}', [BidController::class, 'destroy'])->name('bids.destroy');
+
 });
 
 // Authenticated user profile and dashboard routes

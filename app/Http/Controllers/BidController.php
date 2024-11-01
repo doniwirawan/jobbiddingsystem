@@ -110,4 +110,16 @@ class BidController extends Controller
 
         return redirect()->back()->with('success', 'You have rejected the bid.');
     }
+
+    public function destroy(Project $project, Bid $bid)
+    {
+        // Ensure the authenticated user is the owner of the bid
+        if ($bid->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $bid->delete();
+        return redirect()->route('bids.index')
+                         ->with('success', 'Your bid has been successfully canceled.');
+    }
 }
