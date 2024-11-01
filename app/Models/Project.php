@@ -18,6 +18,8 @@ class Project extends Model
     protected $fillable = [
         'name',
         'date',
+        'start_date',     // Add start_date
+        'end_date', 
         'entity',
         'type',
         'rate',
@@ -26,6 +28,11 @@ class Project extends Model
         'status',
         'created_by',
     ];
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
+
     // Use the 'slug' for route model binding
     public function getRouteKeyName()
     {

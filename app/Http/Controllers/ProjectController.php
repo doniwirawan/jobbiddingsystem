@@ -37,26 +37,27 @@ class ProjectController extends Controller
     // Store the newly created project in the database
     public function store(Request $request)
     {
-         if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'producer') {
+        if (auth()->user()->role !== 'admin' && auth()->user()->role !== 'producer') {
             abort(403);  // Unauthorized access, redirect to custom 403 page
         }
+
         $request->validate([
-        'name' => 'required|string|max:255',
-        'date' => 'required|date',
-        'entity' => 'required|string|in:Corp,Weddings,Studio',
-        'type' => 'required|string|in:Photography,Videography',
-        'rate' => 'required|numeric',
-        'role' => 'required|string|in:Primary,Secondary',
-        'remarks' => 'nullable|string',
-        'status' => 'required|string|in:Open,Closed',
-    ]);
+            'name' => 'required|string|max:255',
+            'start_date' => 'nullable|date|before_or_equal:end_date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'entity' => 'required|string|in:Corp,Weddings,Studio',
+            'type' => 'required|string|in:Photography,Videography',
+            'rate' => 'required|numeric',
+            'role' => 'required|string|in:Primary,Secondary',
+            'remarks' => 'nullable|string',
+            'status' => 'required|string|in:Open,Closed',
+        ]);
 
         // Generate a slug from the project name
         $slug = Str::slug($request->name);
 
         // Ensure the slug is unique by checking if any other projects have the same slug
         $existingSlugs = Project::where('slug', 'like', $slug . '%')->pluck('slug');
-
         if ($existingSlugs->contains($slug)) {
             $slug = $slug . '-' . ($existingSlugs->count() + 1); // Append number if a conflict exists
         }
@@ -64,7 +65,8 @@ class ProjectController extends Controller
         Project::create([
             'name' => $request->name,
             'slug' => $slug,
-            'date' => $request->date,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
             'entity' => $request->entity,
             'type' => $request->type,
             'rate' => $request->rate,
@@ -76,6 +78,7 @@ class ProjectController extends Controller
 
         return redirect()->route('projects.index')->with('success', 'Project created successfully.');
     }
+
 
     // Display bids for a specific project, showing the lowest bid
     public function showBids(Project $project)
@@ -244,17 +247,62 @@ class ProjectController extends Controller
         return view('projects.edit', compact('project'));
     }
 
+    // public function update(Request $request, Project $project)
+    // {
+    //      $request->validate([
+    //     'name' => 'required|string|max:255',
+    //     'date' => 'nullable|date',
+    //     'start_date' => 'required|date|before_or_equal:end_date',
+    //     'end_date' => 'required|date|after_or_equal:start_date',
+    //     'entity' => 'required|string',
+    //     'type' => 'required|string',
+    //     'rate' => 'required|numeric',
+    //     'role' => 'required|string',
+    //     'remarks' => 'nullable|string',
+    //     'status' => 'required|string',
+    // ]);
+
+    // // Only generate a new slug if the name has changed
+    // if ($request->name !== $project->name) {
+    //     $slug = Str::slug($request->name);
+
+    //     // Ensure the slug is unique
+    //     $existingSlugs = Project::where('slug', 'like', $slug . '%')->pluck('slug');
+
+    //     if ($existingSlugs->contains($slug)) {
+    //         $slug = $slug . '-' . ($existingSlugs->count() + 1); // Append number if conflict
+    //     }
+
+    //     $project->slug = $slug;
+    // }
+
+    // $project->update([
+    //     'name' => $request->name,
+    //     'date' => $request->date,
+    //     'start_date' => $request->start_date,
+    //     'end_date' => $request->end_date,
+    //     'entity' => $request->entity,
+    //     'type' => $request->type,
+    //     'rate' => $request->rate,
+    //     'role' => $request->role,
+    //     'remarks' => $request->remarks,
+    //     'status' => $request->status,
+    // ]);
+
+    // return redirect()->route('projects.show', $project->slug)->with('success', 'Project updated successfully.');
+    // }
     public function update(Request $request, Project $project)
-    {
-         $request->validate([
+{
+    $request->validate([
         'name' => 'required|string|max:255',
-        'date' => 'required|date',
-        'entity' => 'required|string',
-        'type' => 'required|string',
+        'start_date' => 'nullable|date|before_or_equal:end_date',
+        'end_date' => 'nullable|date|after_or_equal:start_date',
+        'entity' => 'required|string|in:Corp,Weddings,Studio',
+        'type' => 'required|string|in:Photography,Videography',
         'rate' => 'required|numeric',
-        'role' => 'required|string',
+        'role' => 'required|string|in:Primary,Secondary',
         'remarks' => 'nullable|string',
-        'status' => 'required|string',
+        'status' => 'required|string|in:Open,Closed',
     ]);
 
     // Only generate a new slug if the name has changed
@@ -263,17 +311,17 @@ class ProjectController extends Controller
 
         // Ensure the slug is unique
         $existingSlugs = Project::where('slug', 'like', $slug . '%')->pluck('slug');
-
         if ($existingSlugs->contains($slug)) {
             $slug = $slug . '-' . ($existingSlugs->count() + 1); // Append number if conflict
         }
-
         $project->slug = $slug;
     }
 
+    // Update project with new data
     $project->update([
         'name' => $request->name,
-        'date' => $request->date,
+        'start_date' => $request->start_date,
+        'end_date' => $request->end_date,
         'entity' => $request->entity,
         'type' => $request->type,
         'rate' => $request->rate,
@@ -283,7 +331,8 @@ class ProjectController extends Controller
     ]);
 
     return redirect()->route('projects.show', $project->slug)->with('success', 'Project updated successfully.');
-    }
+}
+
     public function markWinnerAjax(Request $request, Project $project, Bid $bid)
     {
         // Authorize only admin or producer to mark a winner

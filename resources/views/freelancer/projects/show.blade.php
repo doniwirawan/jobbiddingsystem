@@ -17,7 +17,13 @@
             <!-- Project Name and Info -->
             <h3 class="card-title"><i class="bi bi-briefcase-fill"></i> {{ $project->name }}</h3>
             <p class="card-text">
-                <strong><i class="bi bi-calendar-event"></i> Project Date:</strong> {{ $project->date }}<br>
+                {{-- <strong><i class="bi bi-calendar-event"></i> Project Date:</strong> {{ $project->date }}<br> --}}
+                <strong><i class="bi bi-calendar-event"></i> Start Date:</strong> 
+    {{ $project->start_date ? $project->start_date->format('Y-m-d') : 'Not specified' }}
+    <br>
+    <strong><i class="bi bi-calendar-event"></i> End Date:</strong> 
+    {{ $project->end_date ? $project->end_date->format('Y-m-d') : 'Not specified' }}
+    <br>
                 <strong><i class="bi bi-building"></i> Entity:</strong> {{ ucfirst($project->entity) }}<br>
                 <strong><i class="bi bi-camera-video-fill"></i> Type:</strong> {{ $project->type }}<br>
                 <strong><i class="bi bi-currency-dollar"></i> Rate:</strong> ${{ number_format($project->rate, 2) }}<br>

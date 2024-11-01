@@ -174,7 +174,7 @@
                     <th scope="col"><i class="bi bi-briefcase-fill"></i> Project Name</th>
                     <th scope="col"><i class="bi bi-cash"></i> Your Bid Amount</th>
                     <th scope="col"><i class="bi bi-award-fill"></i> Bid Status</th>
-                    <th scope="col"><i class="bi bi-calendar-event"></i> Project Date</th>
+                    <th scope="col"><i class="bi bi-calendar-event"></i> Project Start Date</th><th scope="col"><i class="bi bi-calendar-event"></i> Project End Date</th>
                     <th scope="col"><i class="bi bi-gear"></i> Actions</th>
                 </tr>
             </thead>

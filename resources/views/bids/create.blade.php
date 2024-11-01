@@ -13,7 +13,13 @@
         <div class="card-body">
             <h4 class="fw-bold"><i class="bi bi-briefcase-fill"></i> Project: {{ $project->name }}</h4>
             <p class="mb-4">
-                <strong><i class="bi bi-calendar-event"></i> Project Date:</strong> {{ $project->date }}<br>
+                {{-- <strong><i class="bi bi-calendar-event"></i> Project Date:</strong> {{ $project->date }}<br> --}}
+                <strong><i class="bi bi-calendar-event"></i> Start Date:</strong> 
+    {{ $project->start_date ? $project->start_date->format('Y-m-d') : 'Not specified' }}
+    <br>
+    <strong><i class="bi bi-calendar-event"></i> End Date:</strong> 
+    {{ $project->end_date ? $project->end_date->format('Y-m-d') : 'Not specified' }}
+    <br>
                 <strong><i class="bi bi-camera-video-fill"></i> Type:</strong> {{ ucfirst($project->type) }}<br>
                 <strong><i class="bi bi-currency-dollar"></i> Rate:</strong> ${{ number_format($project->rate, 2) }}
             </p>

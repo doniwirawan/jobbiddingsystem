@@ -13,7 +13,7 @@ class Bid extends Model
 {
      use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    protected $fillable = ['user_id', 'project_id', 'amount', 'remarks'];
+    protected $fillable = ['user_id', 'project_id', 'amount', 'remarks','   is_winner','created_at','updated_at','is_accepted','accepted_at','deadline'];
 
     // Each bid belongs to a user (freelancer)
     public function user()

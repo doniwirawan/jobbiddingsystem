@@ -37,21 +37,25 @@ class FreelancerController extends Controller
     // Method to show the details of a specific project
     public function show(Project $project)
     {
-        $userBid = null;
-        $winningBid = null;
+         $userBid = null;
+    $winningBid = null;
 
-        if (Auth::check() && Auth::user()->hasRole('freelancer')) {
-            // Get the authenticated user's bid for this project (if any)
-            $userBid = Bid::where('user_id', Auth::id())->where('project_id', $project->id)->first();
+    if (Auth::check() && Auth::user()->hasRole('freelancer')) {
+        // Get the authenticated user's bid for this project (if any)
+        $userBid = Bid::where('user_id', Auth::id())->where('project_id', $project->id)->first();
 
-            // Check if the user has the winning bid
-            $winningBid = Bid::where('user_id', Auth::id())
-                            ->where('project_id', $project->id)
-                            ->where('is_winner', true)
-                            ->first();
-        }
+        // Check if the user has the winning bid
+        $winningBid = Bid::where('user_id', Auth::id())
+                        ->where('project_id', $project->id)
+                        ->where('is_winner', true)
+                        ->first();
+    }
 
-        return view('freelancer.projects.show', compact('project', 'userBid', 'winningBid'));
+    // Set default values for start_date and end_date if they are null
+    $project->start_date = $project->start_date ?? 'Not specified';
+    $project->end_date = $project->end_date ?? 'Not specified';
+
+    return view('freelancer.projects.show', compact('project', 'userBid', 'winningBid'));
     }
 
 }
