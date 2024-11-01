@@ -99,7 +99,7 @@ class ProjectController extends Controller
         
         $bid->update([
             'is_winner' => true,
-            'deadline' => now()->addHours(36),
+            'deadline' => now()->addHours(24),
         ]);
 
         $bid->user->notify(new BidWonNotification($bid));

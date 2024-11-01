@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
-use App\Models\Bid;
+use App\Models\{Project, Bid};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications\{BidAccepted, BidWonNotification};
 
 class BidController extends Controller
 {
@@ -89,8 +89,11 @@ class BidController extends Controller
     public function accept(Bid $bid)
     {
         // Check if the user is the bid winner and the bid hasn't already been accepted or rejected
-        if (auth()->id() !== $bid->user_id || $bid->is_accepted !== null) {
-            abort(403); // Unauthorized action
+        // if (auth()->id() !== $bid->user_id || $bid->is_accepted !== null) {
+        //     abort(403); // Unauthorized action
+        // }
+        if (auth()->id() !== $bid->user_id) {
+            abort(403, 'You do not own this bid.');
         }
 
         // Mark the bid as accepted and update the timestamp
@@ -104,6 +107,10 @@ class BidController extends Controller
         $project->update([
             'status' => 'Closed',
         ]);
+
+         // Send notifications to the bidder and the project creator
+        $bid->user->notify(new BidAccepted($project));
+        // $project->creator->notify((new BidAccepted($project))->cc('doni@studiofivecorp.com'));
 
         return redirect()->back()->with('success', 'You have accepted the bid and the project is now closed.');
     }

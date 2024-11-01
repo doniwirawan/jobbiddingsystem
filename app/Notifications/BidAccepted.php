@@ -24,10 +24,17 @@ class BidAccepted extends Notification
 
     public function toMail($notifiable)
     {
-        return (new MailMessage)
+        $email = (new MailMessage)
             ->subject('Your Bid has been Accepted!')
             ->line('Congratulations! Your bid for the project "' . $this->project->name . '" has been accepted.')
-            ->action('View Project', url('/projects/' . $this->project->id))
+            ->action('View Project', url('/projects/' . $this->project->slug))
             ->line('Thank you for using our platform!');
+
+        // Add CC to "doni@studiofivecorp.com" for project creator
+        if ($notifiable->id === $this->project->created_by) {
+            $email->cc('doni@studiofivecorp.com');
+        }
+
+        return $email;
     }
 }

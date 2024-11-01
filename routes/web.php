@@ -10,15 +10,34 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Bid;
+use App\Models\User;
+use App\Notifications\{BidAccepted, BidWonNotification};
+// use Illuminate\Bus\Queueable;
+// use Illuminate\Notifications\Messages\MailMessage;
+// use Illuminate\Notifications\Notification;
 
-Route::get('/test-email', function () {
-    Mail::raw('This is a test email from Laravel using Laragon.', function ($message) {
-        $message->to('doni@studiofivecorp.com')
-                ->subject('Test Email');
-    });
 
-    return 'Test email sent!';
+
+Route::get('/test-bid-won-email', function () {
+    // Replace with an actual user ID and bid ID from your database
+    $userId = 1; // Example user ID (the freelancer receiving the email)
+    $bidId = 21;  // Example bid ID (the bid that won)
+
+    // Find the user and bid
+    $user = User::find($userId);
+    $bid = Bid::find($bidId);
+
+    if ($user && $bid) {
+        // Send the notification
+        Notification::send($user, new BidWonNotification($bid));
+
+        return 'Test bid won email sent!';
+    }
+
+    return 'User or Bid not found. Please check the user ID and bid ID.';
 });
+
 
 
 // Public routes accessible to everyone
