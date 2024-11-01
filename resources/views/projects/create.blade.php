@@ -33,11 +33,11 @@
                 <!-- Start and End Dates -->
                 <div class="mb-3">
                     <label for="start_date" class="form-label">Project Start Date (optional)</label>
-                    <input type="date" class="form-control" name="start_date" value="{{ old('start_date') }}">
+                    <input type="date" class="form-control" name="start_date" id="start_date" value="{{ old('start_date') }}" min="{{ date('Y-m-d') }}">
                 </div>
                 <div class="mb-3">
                     <label for="end_date" class="form-label">Project End Date (optional)</label>
-                    <input type="date" class="form-control" name="end_date" value="{{ old('end_date') }}">
+                    <input type="date" class="form-control" name="end_date" id="end_date" value="{{ old('end_date') }}" min="{{ date('Y-m-d') }}">
                 </div>
 
                 <!-- Entity -->
@@ -99,4 +99,12 @@
         </div>
     </div>
 </div>
+
+<!-- JavaScript for End Date Validation -->
+<script>
+    document.getElementById('start_date').addEventListener('change', function() {
+        const startDate = this.value;
+        document.getElementById('end_date').min = startDate;
+    });
+</script>
 @endsection

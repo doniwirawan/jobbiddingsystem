@@ -30,20 +30,21 @@
                         <td>{{ $bid->project->name }}</td>
                         <td>${{ number_format($bid->amount, 2) }}</td>
 
-                        <!-- Bid Status: Won, Pending, or Lost -->
+                        <!-- Bid Status: Winner Not Chosen Yet, Accepted, Rejected, or Lost -->
                         <td>
                             @if ($bid->is_winner)
                                 @if ($bid->is_accepted === null)
                                     <span class="badge bg-warning"><i class="bi bi-clock-fill"></i> Pending Acceptance</span>
                                 @elseif ($bid->is_accepted)
                                     <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Accepted</span>
+                                    <small>(Deadline: {{ $bid->deadline ? $bid->deadline->format('Y-m-d') : 'N/A' }})</small>
                                 @else
                                     <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Rejected</span>
                                 @endif
                             @elseif ($bid->project->status == 'closed')
                                 <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Lost</span>
                             @else
-                                <span class="badge bg-warning"><i class="bi bi-clock-fill"></i> Pending</span>
+                                <span class="badge bg-secondary"><i class="bi bi-clock-fill"></i> Winner Not Chosen Yet</span>
                             @endif
                         </td>
 
@@ -56,12 +57,21 @@
                             <a href="{{ route('projects.show', $bid->project->slug) }}" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-eye"></i> View Project
                             </a>
-                            
-                            <!-- Edit Button for Open Projects and Non-Winning Bids -->
-                            @if (!$bid->is_winner && $bid->project->status != 'closed')
-                                <a href="{{ route('bids.create', $bid->project->id) }}" class="btn btn-sm btn-outline-success">
-                                    <i class="bi bi-pencil-square"></i> Edit Bid
-                                </a>
+
+                            <!-- Edit Bid Button Always Available -->
+                            <a href="{{ route('bids.create', $bid->project->slug) }}" class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-pencil-square"></i> Edit Bid
+                            </a>
+
+                            <!-- Cancel Bid Option Available for Pending Bids -->
+                            @if (!$bid->is_winner || ($bid->is_winner && $bid->is_accepted === null))
+                                <form action="{{ route('bids.reject', $bid->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-x-circle"></i> Cancel Bid
+                                    </button>
+                                </form>
                             @endif
 
                             <!-- Accept/Reject Buttons for Winning Bids -->
@@ -73,18 +83,6 @@
                                         <i class="bi bi-check"></i> Accept
                                     </button>
                                 </form>
-
-                                <form action="{{ route('bids.reject', $bid->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="bi bi-x"></i> Reject
-                                    </button>
-                                </form>
-                            @elseif ($bid->is_accepted)
-                                <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Accepted</span>
-                            @else
-                                <span class="badge bg-danger"><i class="bi bi-x-circle-fill"></i> Rejected</span>
                             @endif
                         </td>
                     </tr>

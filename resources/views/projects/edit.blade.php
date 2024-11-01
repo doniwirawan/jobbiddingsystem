@@ -31,19 +31,16 @@
                     <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $project->name) }}" placeholder="Enter project name" required>
                 </div>
 
-                {{-- <!-- Project Date -->
-                <div class="mb-3">
-                    <label for="date" class="form-label">Project Date</label>
-                    <input type="date" class="form-control" id="date" name="date" value="{{ old('date', $project->date) }}" required>
-                </div> --}}
-                <!-- Project Date -->
+                <!-- Project Start Date -->
                 <div class="mb-3">
                     <label for="start_date" class="form-label">Project Start Date</label>
-                    <input type="date" class="form-control" name="start_date" value="{{ old('start_date', $project->start_date ?? '') }}"  required>
+                    <input type="date" class="form-control" id="start_date" name="start_date" value="{{ old('start_date', $project->start_date ? $project->start_date->format('Y-m-d') : today()->format('Y-m-d')) }}" min="{{ today()->format('Y-m-d') }}" required>
                 </div>
-                 <div class="mb-3">
+
+                <!-- Project End Date -->
+                <div class="mb-3">
                     <label for="end_date" class="form-label">Project End Date</label>
-                    <input type="date" class="form-control" name="end_date" value="{{ old('end_date', $project->end_date ?? '') }}"  required>
+                    <input type="date" class="form-control" id="end_date" name="end_date" value="{{ old('end_date', $project->end_date ? $project->end_date->format('Y-m-d') : '') }}" min="{{ old('start_date', $project->start_date ? $project->start_date->format('Y-m-d') : today()->format('Y-m-d')) }}" required>
                 </div>
 
                 <!-- Entity -->

@@ -6,14 +6,32 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Role;
 use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;  // Import the HasRoles trait
-use Laravel\Sanctum\HasApiTokens; 
+use Spatie\Permission\Traits\HasRoles;
+use Laravel\Sanctum\HasApiTokens;
 
 class Bid extends Model
 {
-     use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    protected $fillable = ['user_id', 'project_id', 'amount', 'remarks','   is_winner','created_at','updated_at','is_accepted','accepted_at','deadline'];
+    protected $fillable = [
+        'user_id',
+        'project_id',
+        'amount',
+        'remarks',
+        'is_winner',
+        'is_accepted',
+        'accepted_at',
+        'deadline',
+        'created_at',
+        'updated_at'
+    ];
+
+    protected $casts = [
+        'is_winner' => 'boolean',
+        'is_accepted' => 'boolean',
+        'accepted_at' => 'datetime',
+        'deadline' => 'datetime',
+    ];
 
     // Each bid belongs to a user (freelancer)
     public function user()
