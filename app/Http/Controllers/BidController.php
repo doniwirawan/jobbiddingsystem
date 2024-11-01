@@ -88,17 +88,26 @@ class BidController extends Controller
 
     public function accept(Bid $bid)
     {
+        // Check if the user is the bid winner and the bid hasn't already been accepted or rejected
         if (auth()->id() !== $bid->user_id || $bid->is_accepted !== null) {
-            abort(403);
+            abort(403); // Unauthorized action
         }
 
+        // Mark the bid as accepted and update the timestamp
         $bid->update([
             'is_accepted' => true,
             'accepted_at' => now(),
         ]);
 
-        return redirect()->back()->with('success', 'You have accepted the bid.');
+        // Automatically close the project if this bid is accepted
+        $project = $bid->project;
+        $project->update([
+            'status' => 'Closed',
+        ]);
+
+        return redirect()->back()->with('success', 'You have accepted the bid and the project is now closed.');
     }
+
 
     public function reject(Bid $bid)
     {

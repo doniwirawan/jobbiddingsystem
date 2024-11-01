@@ -9,6 +9,16 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test-email', function () {
+    Mail::raw('This is a test email from Laravel using Laragon.', function ($message) {
+        $message->to('doni@studiofivecorp.com')
+                ->subject('Test Email');
+    });
+
+    return 'Test email sent!';
+});
 
 
 // Public routes accessible to everyone

@@ -58,13 +58,12 @@
                                 <i class="bi bi-eye"></i> View Project
                             </a>
 
-                            <!-- Edit Bid Button Always Available -->
-                            <a href="{{ route('bids.create', $bid->project->slug) }}" class="btn btn-sm btn-outline-success">
-                                <i class="bi bi-pencil-square"></i> Edit Bid
-                            </a>
+                            <!-- Edit and Cancel Bid Buttons Available if Not Accepted -->
+                            @if ($bid->is_accepted === null)
+                                <a href="{{ route('bids.create', $bid->project->slug) }}" class="btn btn-sm btn-outline-success">
+                                    <i class="bi bi-pencil-square"></i> Edit Bid
+                                </a>
 
-                            <!-- Cancel Bid Option Available for Pending Bids -->
-                            @if (!$bid->is_winner || ($bid->is_winner && $bid->is_accepted === null))
                                 <form action="{{ route('bids.destroy', ['project' => $bid->project->slug, 'bid' => $bid->id]) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
@@ -74,7 +73,7 @@
                                 </form>
                             @endif
 
-                            <!-- Accept/Reject Buttons for Winning Bids -->
+                            <!-- Accept/Reject Buttons for Winning Bids (if not accepted yet) -->
                             @if ($bid->is_winner && $bid->is_accepted === null)
                                 <form action="{{ route('bids.accept', $bid->id) }}" method="POST" class="d-inline">
                                     @csrf
@@ -89,12 +88,6 @@
                 @endforeach
             </tbody>
         </table>
-        <!-- Pagination Links -->
-        <div class="d-flex justify-content-center">
-            {{ $bids->links() }}
-        </div>
     @endif
 </div>
 @endsection
-
-

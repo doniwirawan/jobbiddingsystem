@@ -53,7 +53,7 @@ class ProjectController extends Controller
 
         return redirect()->route('projects.index')->with('success', 'Project created successfully.');
     }
-    
+
     public function edit(Project $project)
     {
         // Check if the user has the required role to edit the project
@@ -99,7 +99,7 @@ class ProjectController extends Controller
         
         $bid->update([
             'is_winner' => true,
-            'deadline' => now()->addHours(24),
+            'deadline' => now()->addHours(36),
         ]);
 
         $bid->user->notify(new BidWonNotification($bid));
