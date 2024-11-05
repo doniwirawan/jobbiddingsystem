@@ -138,4 +138,43 @@ class BidController extends Controller
         return redirect()->route('bids.index')
                          ->with('success', 'Your bid has been successfully canceled.');
     }
+
+    // Renamed: Accept a bid
+    public function acceptBid(Bid $bid)
+    {
+        // Ensure only the bid owner can accept
+        if (Auth::id() !== $bid->user_id || $bid->is_accepted !== null) {
+            abort(403); // Unauthorized
+        }
+
+        // Update the bid to mark it as accepted
+        $bid->update([
+            'is_accepted' => true,
+            'accepted_at' => now(),
+        ]);
+
+        // Optionally close the project
+        $project = $bid->project;
+        $project->update([
+            'status' => 'Closed',
+        ]);
+
+        return redirect()->route('bids.index')->with('success', 'Bid accepted and project closed.');
+    }
+
+    // Renamed: Reject a bid
+    public function rejectBid(Bid $bid)
+    {
+        // Ensure only the bid owner can reject
+        if (Auth::id() !== $bid->user_id || $bid->is_accepted !== null) {
+            abort(403); // Unauthorized
+        }
+
+        // Update the bid to mark it as rejected
+        $bid->update([
+            'is_accepted' => false,
+        ]);
+
+        return redirect()->route('bids.index')->with('success', 'Bid rejected.');
+    }
 }

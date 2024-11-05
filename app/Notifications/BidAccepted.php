@@ -5,6 +5,8 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Bid;
+use App\Models\Project;
 
 class BidAccepted extends Notification
 {
@@ -25,15 +27,11 @@ class BidAccepted extends Notification
     public function toMail($notifiable)
     {
         $email = (new MailMessage)
-            ->subject('Your Bid has been Accepted!')
+            ->subject('Your Bid for "' . $this->project->name . '" has been Accepted!')
             ->line('Congratulations! Your bid for the project "' . $this->project->name . '" has been accepted.')
             ->action('View Project', url('/projects/' . $this->project->slug))
-            ->line('Thank you for using our platform!');
-
-        // Add CC to "doni@studiofivecorp.com" for project creator
-        if ($notifiable->id === $this->project->created_by) {
-            $email->cc('doni@studiofivecorp.com');
-        }
+            ->line('Thank you for using our platform!')
+            ->cc('doni@studiofivecorp.com'); // Always CC this email
 
         return $email;
     }

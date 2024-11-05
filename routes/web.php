@@ -104,8 +104,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects/{project:slug}/bid', [BidController::class, 'create'])->name('bids.create');
     Route::post('/projects/{project:slug}/bid', [BidController::class, 'store'])->name('bids.store');
     Route::get('/projects/{project:slug}/bids/history', [BidController::class, 'history'])->name('bids.history');
+
     Route::patch('/bids/{bid}/accept', [BidController::class, 'accept'])->name('bids.accept');
     Route::patch('/bids/{bid}/reject', [BidController::class, 'reject'])->name('bids.reject');
+
+    // Experimental routes using GET requests
+    Route::get('/bids/{bid}/accept', [BidController::class, 'acceptBid'])->name('bids.accept');
+    Route::get('/bids/{bid}/reject', [BidController::class, 'rejectBid'])->name('bids.reject');
+
     Route::delete('/projects/{project:slug}/bids/{bid}', [BidController::class, 'destroy'])->name('bids.destroy');
 
 });

@@ -94,14 +94,14 @@
 
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <!-- Display User Roles -->
-                            <div class="dropdown-item-text">
+                            {{-- <div class="dropdown-item-text">
                                 <strong>Roles:</strong>
                                 <ul class="list-unstyled mb-2">
                                     @foreach(Auth::user()->roles as $role)
                                         <li>{{ ucfirst($role->name) }}</li>
                                     @endforeach
                                 </ul>
-                            </div>
+                            </div> --}}
 
                             <!-- My Bids (for freelancers) -->
                             @role('freelancer')
