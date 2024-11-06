@@ -31,9 +31,32 @@
                         </a>
 
                         <!-- Delete Button (opens modal) -->
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $user->id }}">
                             <i class="bi bi-trash-fill"></i> Delete
                         </button>
+
+                        <!-- Delete Confirmation Modal for this user -->
+                        <div class="modal fade" id="deleteModal{{ $user->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $user->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel{{ $user->id }}">Confirm Delete</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure you want to delete the user <strong>{{ $user->name }}</strong>?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
                 @endforeach
@@ -46,48 +69,4 @@
         </div> --}}
     @endif
 </div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Are you sure you want to delete the user <strong><span id="modalUserName"></span></strong>?
-            </div>
-            <div class="modal-footer">
-                <form id="deleteUserForm" method="POST" action="">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-@endsection
-
-@section('scripts')
-<script>
-    // Attach event listener to trigger modal and set values
-    var deleteModal = document.getElementById('deleteModal');
-    deleteModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget; // Button that triggered the modal
-        var userId = button.getAttribute('data-user-id'); // Extract user ID
-        var userName = button.getAttribute('data-user-name'); // Extract user name
-
-        // Update modal content
-        var modalUserName = deleteModal.querySelector('#modalUserName');
-        modalUserName.textContent = userName;
-
-        // Update form action URL
-        var form = deleteModal.querySelector('#deleteUserForm');
-        form.action = '/admin/users/' + userId; // Set the delete route with the user ID
-    });
-</script>
 @endsection
