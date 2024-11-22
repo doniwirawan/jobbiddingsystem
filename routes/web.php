@@ -18,6 +18,17 @@ use App\Notifications\{BidAccepted, BidWonNotification};
 // use Illuminate\Notifications\Notification;
 
 
+Route::get('/test-email', function () {
+    $email = 'doniwirawan166@gmail.com'; // Target email for testing
+
+    // Send the email with "test" as the content
+    Mail::raw('test', function ($message) use ($email) {
+        $message->to($email)
+                ->subject('Test Email');
+    });
+
+    return 'Test email sent to doniwirawan166@gmail.com!';
+});
 
 Route::get('/test-bid-won-email', function () {
     // Replace with an actual user ID and bid ID from your database
