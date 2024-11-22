@@ -68,13 +68,14 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         $userBid = $winningBid = null;
+        $bids = $project->bids;
 
         if (Auth::check() && Auth::user()->hasRole('freelancer')) {
             $userBid = $project->bids()->where('user_id', Auth::id())->first();
             $winningBid = $project->bids()->where('user_id', Auth::id())->where('is_winner', true)->first();
         }
 
-        return view('projects.show', compact('project', 'userBid', 'winningBid'));
+        return view('projects.show', compact('project', 'userBid', 'winningBid','bids'));
     }
 
     public function showBids(Project $project)
